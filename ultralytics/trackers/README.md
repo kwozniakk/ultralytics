@@ -33,6 +33,7 @@ Ultralytics YOLO supports the following tracking algorithms. Enable them by pass
 
 - **BoT-SORT:** Use [`botsort.yaml`](https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/trackers/botsort.yaml) to enable this tracker. Based on the [BoT-SORT paper](https://arxiv.org/abs/2206.14651) and its official [code implementation](https://github.com/NirAharon/BoT-SORT).
 - **ByteTrack:** Use [`bytetrack.yaml`](https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/trackers/bytetrack.yaml) to enable this tracker. Based on the [ByteTrack paper](https://arxiv.org/abs/2110.06864) and its official [code implementation](https://github.com/ifzhang/ByteTrack).
+- **BPBreIDSORT:** Use [`bpbreid.yaml`](https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/trackers/bpbreid.yaml) to enable this tracker. It extends BoT-SORT with a body part-based ReID model.
 
 The default tracker is **BoT-SORT**.
 
