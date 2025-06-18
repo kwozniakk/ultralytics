@@ -182,7 +182,15 @@ By default, ReID is turned off to minimize performance overhead. Enabling it is 
   ```bash
   pip install "torchreid@git+https://github.com/victorjoos/keypoint_promptable_reidentification"
   ```
-  to enable this option.
+  to enable this option. Inputs should be dictionaries containing the image and keypoints.
+  The helper below loads demo samples:
+
+  ```python
+  from ultralytics.trackers.kpr_reid import load_kpr_samples
+
+  samples = load_kpr_samples("assets/demo/soccer_players/images",
+                             "assets/demo/soccer_players/keypoints")
+  ```
 
 For better performance, especially when using a separate classification model for ReID, you can export it to a faster backend like TensorRT:
 
