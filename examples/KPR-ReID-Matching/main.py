@@ -14,11 +14,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config", required=True, help="Path to KPR config YAML")
     parser.add_argument(
         "--data",
-        default="ultralytics/assets/demo/soccer_players",
-        help=(
-            "Folder with images/ and keypoints/ subfolders. Only keypoint JSONs"
-            " are included; add your own images."
-        ),
+        default="path/to/data",
+        help="Folder containing your images/ and keypoints/ subfolders",
     )
     parser.add_argument(
         "--reference", default="personA1.jpg", help="Reference image name inside the images folder"

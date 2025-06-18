@@ -191,9 +191,9 @@ By default, ReID is turned off to minimize performance overhead. Enabling it is 
 
   samples = load_kpr_samples("path/to/images", "path/to/keypoints")
   ```
-  Sample keypoint annotations are provided under `ultralytics/assets/demo/soccer_players/keypoints`,
-  but you must supply matching images. See `examples/KPR-ReID-Matching` for a full script comparing
-  embeddings using your own data.
+  Provide your own keypoint annotations and matching images in these folders. See
+  `examples/KPR-ReID-Matching` for a full script comparing embeddings using your
+  own data.
   When using a pose model for detection (e.g. `yolov8n-pose.pt`), the detected keypoints are
   automatically passed to the KPR encoder during tracking, and keypoints from other detections
   in the frame are used as negative prompts.

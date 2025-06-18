@@ -1,8 +1,8 @@
 # KPR Re-Identification Matching Demo
 
 This example shows how to use the optional [Keypoint Promptable Re-Identification](https://github.com/VlSomers/keypoint_promptable_reidentification) (KPR) module with Ultralytics trackers.
-It compares embeddings from a few example keypoint annotations using a KPR model. Only keypoint JSON files are
-included in this repository; you need to supply matching images yourself.
+It compares embeddings using keypoint annotations that you provide. No sample images
+or keypoint files are included.
 Each sample dictionary includes the positive keypoints for the target person (`keypoints_xyc`) and
 keypoints from other people in the image (`negative_kps`).
 
@@ -18,8 +18,7 @@ keypoints from other people in the image (`negative_kps`).
    python main.py --config path/to/kpr_config.yaml
    ```
    Optional arguments:
-   - `--data`: path to a folder containing `images/` and `keypoints/` subfolders. Sample keypoints live under
-     `ultralytics/assets/demo/soccer_players/keypoints`, but you must provide the corresponding images.
+   - `--data`: path to a folder containing your own `images/` and `keypoints/` subfolders.
    - `--reference`: image file name to use as the reference person.
 
 3. Track with YOLO pose and KPR:
