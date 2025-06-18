@@ -3,6 +3,7 @@
 from functools import partial
 from pathlib import Path
 
+import numpy as np
 import torch
 
 from ultralytics.utils import YAML, IterableSimpleNamespace
@@ -95,7 +96,22 @@ def on_predict_postprocess_end(predictor: object, persist: bool = False) -> None
             predictor.vid_path[i if is_stream else 0] = vid_path
 
         det = (result.obb if is_obb else result.boxes).cpu().numpy()
-        tracks = tracker.update(det, result.orig_img, getattr(result, "feats", None))
+        extra = getattr(result, "feats", None)
+        if (
+            hasattr(tracker, "encoder")
+            and getattr(tracker.encoder, "__class__", None)
+            and tracker.encoder.__class__.__name__ == "KPRReID"
+        ):
+            if result.keypoints is not None:
+                kps = result.keypoints.cpu().numpy()
+                neg = []
+                for i in range(len(kps)):
+                    neg_kps = np.delete(kps, i, axis=0)
+                    neg.append(neg_kps)
+                extra = {"keypoints": kps, "negative_keypoints": neg}
+            else:
+                extra = None
+        tracks = tracker.update(det, result.orig_img, extra)
         if len(tracks) == 0:
             continue
         idx = tracks[:, -1].astype(int)

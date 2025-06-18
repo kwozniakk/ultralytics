@@ -198,13 +198,16 @@ class BOTSORT(BYTETracker):
         # ReID module
         self.proximity_thresh = args.proximity_thresh
         self.appearance_thresh = args.appearance_thresh
-        self.encoder = (
-            (lambda feats, s: [f.cpu().numpy() for f in feats])  # native features do not require any model
-            if args.with_reid and self.args.model == "auto"
-            else ReID(args.model)
-            if args.with_reid
-            else None
-        )
+        self.encoder = None
+        if args.with_reid:
+            if args.model == "auto":
+                self.encoder = lambda feats, s: [f.cpu().numpy() for f in feats]  # native features
+            elif args.model.endswith(".yaml"):
+                from .kpr_reid import KPRReID
+
+                self.encoder = KPRReID(args.model)
+            else:
+                self.encoder = ReID(args.model)
 
     def get_kalmanfilter(self) -> KalmanFilterXYWH:
         """Return an instance of KalmanFilterXYWH for predicting and updating object states in the tracking process."""
@@ -217,7 +220,13 @@ class BOTSORT(BYTETracker):
         if len(dets) == 0:
             return []
         if self.args.with_reid and self.encoder is not None:
-            features_keep = self.encoder(img, dets)
+            if isinstance(img, np.ndarray) and img.ndim == 2 and img.shape[0] == len(dets):
+                # features were pre-computed externally
+                features_keep = img
+            elif isinstance(img, list) and len(img) == len(dets):
+                features_keep = np.stack(img, axis=0)
+            else:
+                features_keep = self.encoder(img, dets)
             return [BOTrack(xyxy, s, c, f) for (xyxy, s, c, f) in zip(dets, scores, cls, features_keep)]  # detections
         else:
             return [BOTrack(xyxy, s, c) for (xyxy, s, c) in zip(dets, scores, cls)]  # detections
@@ -236,6 +245,26 @@ class BOTSORT(BYTETracker):
             emb_dists[dists_mask] = 1.0
             dists = np.minimum(dists, emb_dists)
         return dists
+
+    def update(
+        self, results, img: Optional[np.ndarray] = None, feats: Optional[np.ndarray] = None
+    ) -> np.ndarray:
+        """Update tracker with new detections and keypoints for KPR models."""
+        if (
+            self.args.with_reid
+            and getattr(self.encoder, "__class__", None)
+            and self.encoder.__class__.__name__ == "KPRReID"
+        ):
+            kps = None
+            neg = None
+            if isinstance(feats, dict):
+                kps = feats.get("keypoints")
+                neg = feats.get("negative_keypoints")
+            else:
+                kps = feats
+            features = self.encoder(img, results.xywh, kps, neg)
+            feats = np.stack(features) if isinstance(features, list) else features
+        return super().update(results, img, feats)
 
     def multi_predict(self, tracks: List[BOTrack]) -> None:
         """Predict the mean and covariance of multiple object tracks using a shared Kalman filter."""
