@@ -175,6 +175,9 @@ By default, ReID is turned off to minimize performance overhead. Enabling it is 
 
 - **Native features (`model: auto`)**: This leverages features directly from the YOLO detector for ReID, adding minimal overhead. It's ideal when you need some level of ReID without significantly impacting performance. If the detector doesn't support native features, it automatically falls back to using `yolo11n-cls.pt`.
 - **YOLO classification models**: You can explicitly set a classification model (e.g. `yolo11n-cls.pt`) for ReID feature extraction. This provides more discriminative embeddings, but introduces additional latency due to the extra inference step.
+- **KPR models**: Provide the path to a KPR configuration YAML (e.g. `kpr_occ_posetrack_test.yaml`) to leverage keypoint promptable re-identification features for stronger appearance matching.
+  You can start with the example tracker config at `ultralytics/cfg/trackers/kpr.yaml` and customize the `model` path to point to your own KPR config file.
+  KPR is not installed by default; clone the [keypoint_promptable_reidentification](https://github.com/VlSomers/keypoint_promptable_reidentification) repository and install its requirements to enable this option.
 
 For better performance, especially when using a separate classification model for ReID, you can export it to a faster backend like TensorRT:
 
