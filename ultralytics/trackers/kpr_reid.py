@@ -20,8 +20,8 @@ class KPRReID:
             from torchreid.tools.feature_extractor import KPRFeatureExtractor
         except ModuleNotFoundError as e:  # pragma: no cover - optional dependency
             raise ModuleNotFoundError(
-                "KPR dependencies not found. Install the keypoint_promptable_reidentification repo "
-                "and its requirements before using KPRReID."
+                "KPR dependencies not found. Install them with\n"
+                "  pip install \"torchreid@git+https://github.com/victorjoos/keypoint_promptable_reidentification\""
             ) from e
 
         cfg = build_config(config_path=config_path)
